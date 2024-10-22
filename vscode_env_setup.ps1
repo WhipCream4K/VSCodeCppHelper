@@ -99,11 +99,7 @@ New-Item -Path "$vscodePath/tasks.json" -ItemType File -Value $tasksJson
 
 # We need to get out dir for each configuration first
 
-$outDirs = & .\get_outdir.ps1 $vcxprojFilePath
-
-$debugX64OutDir = $outDirs.DebugX64OutDir
-$releaseX64OutDir = $outDirs.ReleaseX64OutDir
-
+# $outDirs = & .\get_outdir.ps1 $vcxprojFilePath
 
 $launchJson = @"
 {
@@ -113,7 +109,7 @@ $launchJson = @"
             "name": "(Windows) Launch x64 Debug",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${debugX64OutDir}`$`{workspaceFolderBasename}.exe",
+            "program": 'bin/Debug/x64/`$`{workspaceFolderBasename}.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "`${fileDirname}`",
@@ -125,7 +121,7 @@ $launchJson = @"
             "name": "(Windows) Launch x64",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${releaseX64OutDir}`${workspaceFolderBaseName}`.exe",
+            "program": 'bin/Release/x64/`$`{workspaceFolderBasename}.exe',
             "args": [],
             "stopAtEntry": false,
             "cwd": "`${fileDirname}`",
@@ -140,4 +136,4 @@ $launchJson = @"
 New-Item -Path "$vscodePath/launch.json" -ItemType File -Value $launchJson
 
 # also run cpp_props_update.ps1
-./cpp_props_update.ps1 $vcxprojFilePath
+./premake_generator.ps1 -vcxprojFilePath $vcxprojFilePath

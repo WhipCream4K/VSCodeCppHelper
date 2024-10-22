@@ -41,7 +41,6 @@ $itemDefinitionGroup = $vcxproj.Project.ItemDefinitionGroup | Where-Object { $_.
 if ($null -ne $itemDefinitionGroup) 
 {
     $includeDirectories = $itemDefinitionGroup.ClCompile.AdditionalIncludeDirectories
-
     $preprocessorDefinitions = $itemDefinitionGroup.ClCompile.PreprocessorDefinitions
 }
 
@@ -85,7 +84,6 @@ $preprocessorDefinitions -split ';' | ForEach-Object { Write-Host "`t$_" }
 Write-Host "Additional include directories have been appended to the includePath in $cppPropertiesFilePath"
 
 # Change OutDir for launch.json
-
 $launchJsonPath = "../.vscode/launch.json"
 $launchJson = Get-Content $launchJsonPath -Raw | ConvertFrom-Json
 
