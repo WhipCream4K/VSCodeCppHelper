@@ -10,16 +10,24 @@ class CppPropsFactory {
     [void]Generate()
     {
         $this.Content = [ordered]@{
+            "env" = @{
+                "includeDirs" = @(
+                )
+                "globalDefines" = @(
+                    "UNICODE",
+                    "_UNICODE"
+                )
+            }
             "configurations" = @(
                 @{
                     "name" = "Debug-Win32"
-                    "includePath" = @(
+                    "includePath" = @( 
+                        '${includeDirs}'
                     )
                     "defines" = @(
                         "_DEBUG",
-                        "WIN32"
-                        "UNICODE",
-                        "_UNICODE"
+                        "WIN32",
+                        '${globalDefines}'
                     )
                     "windowsSdkVersion" = "10.0.22621.0"
                     "cppStandard" = "c++20"
@@ -31,13 +39,13 @@ class CppPropsFactory {
                 },
                 @{
                     "name" = "Release-Win32"
-                    "includePath" = @(
+                    "includePath" = @( 
+                        '${includeDirs}'
                     )
                     "defines" = @(
                         "WIN32",
                         "NDEBUG",
-                        "UNICODE",
-                        "_UNICODE"
+                        '${globalDefines}'
                     )
                     "windowsSdkVersion" = "10.0.22621.0"
                     "cppStandard" = "c++20"
@@ -49,13 +57,12 @@ class CppPropsFactory {
                 },
                 @{
                     "name" = "Debug-x64"
-                    "includePath" = @(
-                        
+                    "includePath" = @( 
+                        '${includeDirs}'
                     )
                     "defines" = @(
                         "_DEBUG",
-                        "UNICODE",
-                        "_UNICODE"
+                        '${globalDefines}'
                     )
                     "windowsSdkVersion" = "10.0.22621.0"
                     "cppStandard" = "c++20"
@@ -68,10 +75,10 @@ class CppPropsFactory {
                 @{
                     "name" = "Release-x64"
                     "includePath" = @(
+                        '${includeDirs}'
                     )
                     "defines" = @(
-                        "UNICODE",
-                        "_UNICODE"
+                        '${globalDefines}'
                     )
                     "windowsSdkVersion" = "10.0.22621.0"
                     "cppStandard" = "c++20"
