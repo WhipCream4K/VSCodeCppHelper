@@ -1,13 +1,13 @@
 class LaunchJsonGenerator {
     [string]$Version
     [string]$TargetName
-    [string]$TargetDir
+    [string]$WorkspaceDir
     [System.Collections.Specialized.OrderedDictionary]$Content
 
-    LaunchJsonGenerator([string]$version, [string]$targetName, [string]$targetDir) {
+    LaunchJsonGenerator([string]$version, [string]$targetName, [string]$workspaceDir) {
         $this.Version = $version
         $this.TargetName = $targetName
-        $this.TargetDir = $targetDir
+        $this.WorkspaceDir = $workspaceDir
         $this.Content = [ordered]@{}
     }
 
@@ -15,11 +15,12 @@ class LaunchJsonGenerator {
         $this.Content = [ordered]@{
             "version"       = $this.Version
             "configurations" = @(
-                @{
+                [ordered]@{
                     "name"          = '(Windows) Launch ${command:cpptools.activeConfigName}'
                     "type"          = "cppvsdbg"
                     "request"       = "launch"
-                    "program"       = "$($this.TargetDir)/`${input:configuration}/`${input:platform}/$($this.TargetName).exe"
+                    # it only make sense to target the Debug directory
+                    "program"       = "$($this.WorkspaceDir)/Debug/`${input:platform}/$($this.TargetName).exe"
                     "args"          = @('')
                     "stopAtEntry"   = $false
                     "cwd"           = '${fileDirname}'
@@ -29,13 +30,7 @@ class LaunchJsonGenerator {
                 }
             )
             "inputs" = @(
-                @{
-                    "id"      = "configuration"
-                    "type"    = "command"
-                    "command" = "cpptools.activeConfigCustomVariable"
-                    "args"    = "configuration"
-                },
-                @{
+                [ordered]@{
                     "id"      = "platform"
                     "type"    = "command"
                     "command" = "cpptools.activeConfigCustomVariable"

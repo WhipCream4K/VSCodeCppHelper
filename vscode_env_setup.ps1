@@ -70,7 +70,7 @@ $waringLevel = "Extra"
 
 $premakeScript = [PremakeGenerator]::new($workspaceDir,$ProjectName, $projectLocation, $Kind, $projectOutDir, $waringLevel)
 $taskJson = [TaskJsonGenerator]::new("2.0.0", $ProjectName,$workspaceDir, $msbuild)
-$launchJson = [LaunchJsonGenerator]::new("0.2.0", $ProjectName, $projectOutDir)
+$launchJson = [LaunchJsonGenerator]::new("0.2.0", $ProjectName, $workspaceDir)
 $cppPropsJson = [CppPropsFactory]::new("4")
 
 $premakeScript.Generate()
