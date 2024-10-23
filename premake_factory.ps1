@@ -30,6 +30,7 @@ workspace "$($this.ProjectName)"
 project "$($this.ProjectName)"
     kind "$($this.Kind)"
     targetdir "$($this.TargetDir)/%{cfg.buildcfg}/%{cfg.platform}"
+    objdir "$($this.TargetDir)/Intermediate/%{cfg.buildcfg}/%{cfg.platform}"
     location "$($this.Location)"
     warnings "$($this.WarningsLevel)"
 
