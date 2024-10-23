@@ -1,11 +1,13 @@
 class TaskJsonGenerator {
     [string]$Version
     [string]$ProjectDir
+    [string]$ProjectName
     [string]$MSBuildTarget
     [System.Collections.Specialized.OrderedDictionary]$Content
 
-    TaskJsonGenerator([string]$version,[string]$projectDir,[string]$msbuildTarget) {
+    TaskJsonGenerator([string]$version,[string]$projectName,[string]$projectDir,[string]$msbuildTarget) {
         $this.Version = $version
+        $this.ProjectName = $projectName
         $this.ProjectDir = $projectDir
         $this.MSBuildTarget = $msbuildTarget
     }
@@ -13,24 +15,29 @@ class TaskJsonGenerator {
     [void]Generate(){
         $this.Content = [ordered]@{
             "version" = $this.Version
-            "task" = @{
-                "label" = "msbuild `${command:cpptools.activeConfigName}"
-                "type" = "shell"
-                "command" = "$($this.MSBuildTarget)"
-                "args" = @(
-                    "$($this.ProjectDir)/*.sln"
-                    '/property:Configuration=${input:configuration}'
-                    '/p:Platform=${input:platform}'
-                )
-                "group" = @{
-                    "kind" = "build"
-                    "isDefault" = $true
+            "tasks" = @(
+                [ordered]@{
+                    "label" = "msbuild"
+                    "type" = "shell"
+                    "command" = "$($this.MSBuildTarget)"
+                    "args" = @(
+                        "$($this.ProjectDir)/$($this.ProjectName).sln"
+                        '/p:Configuration=${input:configuration}'
+                        "/p:GenerateFullPaths=true"
+                        '/p:Platform=${input:platform}'
+                        "/consoleloggerparameters:NoSummary"
+                        "/t:build"
+                    )
+                    "group" = "build"
+                    "problemMatcher" = @(
+                        "`$msCompile"
+                    )
+                    "presentation" = @{
+                        "reveal" = "silent"
+                    }
+                    "detail" = "Build sln in current configuration"
                 }
-                "problemMatcher" = @(
-                    "`$msCompile"
-                )
-                "detail" = "Build sln in current configuration"
-            }
+            )
             "inputs" = @(
                 @{
                     "id" = "configuration"

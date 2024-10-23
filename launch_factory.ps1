@@ -14,18 +14,18 @@ class LaunchJsonGenerator {
     [void]Generate() {
         $this.Content = [ordered]@{
             "version"       = $this.Version
-            "configuration" = @(
+            "configurations" = @(
                 @{
                     "name"          = '(Windows) Launch ${command:cpptools.activeConfigName}'
                     "type"          = "cppvsdbg"
                     "request"       = "launch"
                     "program"       = "$($this.TargetDir)/`${input:configuration}/`${input:platform}/$($this.TargetName).exe"
-                    "args"          = @()
+                    "args"          = @('')
                     "stopAtEntry"   = $false
                     "cwd"           = '${fileDirname}'
-                    "environment"   = @()
+                    "environment"   = @('')
                     "console"       = "externalTerminal"
-                    "prelaunchTask" = 'msbuild ${command:cpptools.activeConfigName}'
+                    "preLaunchTask" = 'msbuild'
                 }
             )
             "inputs" = @(

@@ -63,13 +63,14 @@ if (-Not (Test-Path $vscodePath)) {
 
 
 # Edit this properties to your needs (premake)
-$projectOutDir = "$OutPath/bin"
-$projectLocation = "$OutPath/$ProjectName"
+$workspaceDir = "." # workspace dir is relative to output path
+$projectOutDir = "$workspaceDir/bin"
+$projectLocation = "$workspaceDir/$ProjectName"
 $waringLevel = "Extra"
 
-$premakeScript = [PremakeGenerator]::new($ProjectName, $projectLocation, $Kind, $projectOutDir, $waringLevel)
-$taskJson = [TaskJsonGenerator]::new("2.0.0", "$OutPath", "$msbuild")
-$launchJson = [LaunchJsonGenerator]::new("0.2.0", "$ProjectName", "$projectOutDir")
+$premakeScript = [PremakeGenerator]::new($workspaceDir,$ProjectName, $projectLocation, $Kind, $projectOutDir, $waringLevel)
+$taskJson = [TaskJsonGenerator]::new("2.0.0", $ProjectName,$workspaceDir, $msbuild)
+$launchJson = [LaunchJsonGenerator]::new("0.2.0", $ProjectName, $projectOutDir)
 $cppPropsJson = [CppPropsFactory]::new("4")
 
 $premakeScript.Generate()

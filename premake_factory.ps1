@@ -4,20 +4,22 @@
 # Because usually it requires a manual directory navigation
 class PremakeGenerator {
     [string]$ProjectName
-    [string]$Location
+    [string]$ProjectDir
     [string]$Kind
     [string]$TargetDir
     [string]$WarningsLevel
     [string]$Content
     [string]$IncludeDirs
+    [string]$WorkspaceDir
 
-    PremakeGenerator([string]$projectName, [string]$location, [string]$kind, [string]$targetDir,[string]$warningLevel) {
+    PremakeGenerator([string]$workspaceDir,[string]$projectName, [string]$projectDir, [string]$kind, [string]$targetDir,[string]$warningLevel) {
         $this.ProjectName = $projectName
-        $this.Location = $location
+        $this.ProjectDir = $projectDir
         $this.Kind = $kind
         $this.TargetDir = $targetDir
         $this.IncludeDirs = @()
         $this.WarningsLevel = $warningLevel
+        $this.WorkspaceDir = $workspaceDir
     }
 
     [void]Generate() {
@@ -25,23 +27,27 @@ class PremakeGenerator {
         $this.Content = @"
 workspace "$($this.ProjectName)"
     configurations { "Debug", "Release" }
-    platform = {"Win32", "x64"}
+    platforms {"Win32", "x64"}
+    location "$($this.WorkspaceDir)"
 
 project "$($this.ProjectName)"
     kind "$($this.Kind)"
     targetdir "$($this.TargetDir)/%{cfg.buildcfg}/%{cfg.platform}"
-    objdir "$($this.TargetDir)/Intermediate/%{cfg.buildcfg}/%{cfg.platform}"
-    location "$($this.Location)"
+    objdir "$($this.WorkspaceDir)/Intermediate/%{cfg.buildcfg}/%{cfg.platform}"
+    location "$($this.ProjectDir)"
     warnings "$($this.WarningsLevel)"
 
     files {  }
 
-    includeDirs { $($this.IncludeDirs) }
+    includedirs { $($this.IncludeDirs) }
 
     libdirs { }
 
+    filter {"actions:vs*"}
+        cppdialect "C++20"
+
     filter {"configurations:Debug"}
-        defines {"_DEBUG,DEBUG"}
+        defines {"_DEBUG"}
         symbols "On"
 
     filter {"configurations:Release"}
