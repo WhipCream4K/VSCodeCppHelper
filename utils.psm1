@@ -38,7 +38,7 @@ function Get-PropOrDefault {
         [xml]$vcxproj,
         [string]$groupName,
         [string]$propertyName,
-        [string]$defaultValue,
+        [string]$defaultValue = "",
         [string]$condition = "Release|x64"
     )
 
@@ -71,26 +71,6 @@ function ConvertTo-ForwardSlash {
 
     return $path -replace '\\', '/'
 }
-
-function AddTab {
-    param (
-        [string]$path
-    )   
-
-    $path += "\t"
-    return $path
-}
-
-function AddLine {
-    param (
-        [string]$string
-    )
-    
-    $string += "`n"
-    return $string
-}
-
-# Convert-VsToPremake.psm1
 
 function Convert-VsToPremake {
     param (

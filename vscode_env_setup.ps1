@@ -1,10 +1,18 @@
 #this script will create launch.json and tasks.json files in .vscode folder
 
+
 param (
-    [string]$vcxprojFilePath
+    [string]$ProjectName = "",
+    [string]$Kind = "",
+    [string]$OutPath = ""
 )
 
-# task.json file
+
+# Just error reminder to input params
+if ($ProjectName -eq "" -or $Kind -eq "" -or $OutPath -eq "") {
+    Write-Host "Please input ProjectName, Kind and OutPath"
+    exit 1
+}
 
 # before we create we need to locate msbuild.exe to be used by vscode at command
 function Get-MsBuildPath {
@@ -41,99 +49,35 @@ if ($msbuild) {
 
 $msbuild = $msbuild -replace '\\', '/'
 
+$vscodePath = "$OutPath/.vscode"
+
 # Create Task.json at .vscode folder also checks if .vscode folder exists if not then create one
-if (-Not (Test-Path "../.vscode")) {
-    New-Item -Path "../.vscode" -ItemType Directory
+if (-Not (Test-Path $vscodePath)) {
+    New-Item -Path $vscodePath -ItemType Directory
 }
 
-$vscodePath = "../.vscode"
+. ./premake_factory.ps1
+. ./task_factory.ps1
+. ./launch_factory.ps1
+. ./cpp_props_factory.ps1
 
-$tasksJson = @"
-{
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "msbuild x64 Debug",
-            "type": "shell",
-            "command": "$msbuild",
-            "args": [
-                "`$`{workspaceFolderBasename}.sln",
-                "/p:Configuration=Debug",
-                "/p:Platform=x64"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": [
-                "`$msCompile`"
-            ],
-            "detail": "Build the solution using msbuild in debug mode"
-        },
-        {
-            "label": "msbuild x64 Release",
-            "type": "shell",
-            "command": "$msbuild",
-            "args": [
-                "`$`{workspaceFolderBaseName}.sln",
-                "/property:Configuration=Release",
-                "/p:Platform=x64"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": [
-                "`$msCompile`"
-            ],
-            "detail": "Build the solution using msbuild in release mode"
-        }
-    ]
-}
-"@
 
-# Create the tasks.json file with the defined content
-New-Item -Path "$vscodePath/tasks.json" -ItemType File -Value $tasksJson
+# Edit this properties to your needs (premake)
+$projectOutDir = "$OutPath/bin"
+$projectLocation = "$OutPath/$ProjectName"
+$waringLevel = "Extra"
 
-# Create Launch.json at .vscode folder also checks if .vscode folder exists if not then create one
+$premakeScript = [PremakeGenerator]::new($ProjectName, $projectLocation, $Kind, $projectOutDir, $waringLevel)
+$taskJson = [TaskJsonGenerator]::new("2.0.0", "$OutPath", "$msbuild")
+$launchJson = [LaunchJsonGenerator]::new("0.2.0", "$ProjectName", "$projectOutDir")
+$cppPropsJson = [CppPropsFactory]::new("4")
 
-# We need to get out dir for each configuration first
+$premakeScript.Generate()
+$taskJson.Generate()
+$launchJson.Generate()
+$cppPropsJson.Generate()
 
-# $outDirs = & .\get_outdir.ps1 $vcxprojFilePath
-
-$launchJson = @"
-{
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "(Windows) Launch x64 Debug",
-            "type": "cppvsdbg",
-            "request": "launch",
-            "program": 'bin/Debug/x64/`$`{workspaceFolderBasename}.exe",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "`${fileDirname}`",
-            "environment": [],
-            "console": "externalTerminal",
-            "preLaunchTask": "msbuild x64 Debug"
-        },
-        {
-            "name": "(Windows) Launch x64",
-            "type": "cppvsdbg",
-            "request": "launch",
-            "program": 'bin/Release/x64/`$`{workspaceFolderBasename}.exe',
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "`${fileDirname}`",
-            "environment": [],
-            "console": "externalTerminal",
-            "preLaunchTask": "msbuild x64 Release"
-        }
-    ]
-}
-"@
-
-New-Item -Path "$vscodePath/launch.json" -ItemType File -Value $launchJson
-
-# also run cpp_props_update.ps1
-./premake_generator.ps1 -vcxprojFilePath $vcxprojFilePath
+$premakeScript.SaveToFile($OutPath)
+$taskJson.SaveToFile($vscodePath)
+$launchJson.SaveToFile($vscodePath)
+$cppPropsJson.SaveToFile($vscodePath)
