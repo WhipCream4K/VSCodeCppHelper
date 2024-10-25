@@ -51,6 +51,7 @@ $msbuild = $msbuild -replace '\\', '/'
 
 $vscodePath = "$OutPath/.vscode"
 
+
 # Create Task.json at .vscode folder also checks if .vscode folder exists if not then create one
 if (-Not (Test-Path $vscodePath)) {
     New-Item -Path $vscodePath -ItemType Directory
@@ -70,7 +71,7 @@ $waringLevel = "Extra"
 
 $premakeScript = [PremakeGenerator]::new($workspaceDir,$ProjectName, $projectLocation, $Kind, $projectOutDir, $waringLevel)
 $taskJson = [TaskJsonGenerator]::new("2.0.0", $ProjectName,$workspaceDir, $msbuild)
-$launchJson = [LaunchJsonGenerator]::new("0.2.0", $ProjectName, $projectOutDir)
+$launchJson = [LaunchJsonGenerator]::new("0.2.0", $ProjectName, "..")
 $cppPropsJson = [CppPropsFactory]::new("4")
 
 $premakeScript.Generate()

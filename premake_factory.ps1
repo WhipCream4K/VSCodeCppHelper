@@ -30,18 +30,8 @@ workspace "$($this.ProjectName)"
     platforms {"Win32", "x64"}
     location "$($this.WorkspaceDir)"
 
-project "$($this.ProjectName)"
-    kind "$($this.Kind)"
-    targetdir "$($this.TargetDir)/%{cfg.buildcfg}/%{cfg.platform}"
-    objdir "$($this.WorkspaceDir)/Intermediate/%{cfg.buildcfg}/%{cfg.platform}"
-    location "$($this.ProjectDir)"
-    warnings "$($this.WarningsLevel)"
-
-    files {  }
-
-    includedirs { $($this.IncludeDirs) }
-
-    libdirs { }
+    filter {"kind:ConsoleApp"}
+        defines {"_CONSOLE"}
 
     filter {"actions:vs*"}
         cppdialect "C++20"
@@ -57,9 +47,18 @@ project "$($this.ProjectName)"
     filter {"platforms:Win32"}
         defines {"WIN32"}    
 
-    filter {"kind:ConsoleApp"}
-        defines {"_CONSOLE"}
-    
+project "$($this.ProjectName)"
+    kind "$($this.Kind)"
+    targetdir "$($this.TargetDir)/%{cfg.buildcfg}/%{cfg.platform}"
+    objdir "$($this.WorkspaceDir)/Intermediate/%{cfg.buildcfg}/%{cfg.platform}"
+    location "$($this.ProjectDir)"
+    warnings "$($this.WarningsLevel)"
+
+    files {  }
+
+    includedirs { $($this.IncludeDirs) }
+
+    libdirs { } 
 "@
     }
 
