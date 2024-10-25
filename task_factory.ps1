@@ -60,7 +60,7 @@ class TaskJsonGenerator {
     [void]SaveToFile([string]$location) {
         # turns content into json file
         $filePath = "$($location)/tasks.json"
-        $this.Content | ConvertTo-Json | Set-Content $filePath -Encoding UTF8
+        $this.Content | ConvertTo-Json -Depth 4 | Set-Content $filePath -Encoding UTF8
         Write-Host "tasks.json file has been generated at $filePath"
     }
 }
