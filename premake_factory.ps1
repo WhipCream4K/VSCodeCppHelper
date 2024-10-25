@@ -43,7 +43,7 @@ project "$($this.ProjectName)"
 
     libdirs { }
 
-    filter {"actions:vs*"}
+    filter {"action:vs*"}
         cppdialect "C++20"
 
     filter {"configurations:Debug"}
