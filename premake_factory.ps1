@@ -33,7 +33,7 @@ workspace "$($this.ProjectName)"
     filter {"kind:ConsoleApp"}
         defines {"_CONSOLE"}
 
-    filter {"actions:vs*"}
+    filter {"action:vs*"}
         cppdialect "C++20"
 
     filter {"configurations:Debug"}

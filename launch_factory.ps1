@@ -16,7 +16,7 @@ class LaunchJsonGenerator {
             "version"       = $this.Version
             "configurations" = @(
                 [ordered]@{
-                    "name"          = '(Windows) Launch ${command:cpptools.activeConfigName}'
+                    "name"          = '(Windows) Launch'
                     "type"          = "cppvsdbg"
                     "request"       = "launch"
                     # it only make sense to target the Debug directory
